@@ -23,7 +23,7 @@ jobs:
       - name: Installer en mode silencieux avec clé
         run: |
           $installerPath = "$env:TEMP\dwagent_x86.exe"
-          $key = "xxx-xxx-xxx" # Remplacez par votre clé
+          $key = "492-495-106" # Remplacez par votre clé
           try {
               Start-Process -FilePath $installerPath -ArgumentList "/SILENT", "key=$key" -Wait
               Write-Host "Installation silencieuse terminée avec la clé spécifiée"
