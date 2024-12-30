@@ -17,7 +17,7 @@ steps:
   - step: Installer en mode silencieux avec clé
     command: |
       $installerPath = "$env:TEMP\dwagent_x86.exe"
-      $key = "492-495-106" # Remplacez par votre clé
+      $key = "xxx-xxx-xxx" # Remplacez par votre clé
       try {
           Start-Process -FilePath $installerPath -ArgumentList "/SILENT", "key=$key" -Wait
           Write-Host "Installation silencieuse terminée avec la clé spécifiée"
@@ -33,31 +33,28 @@ steps:
        # Si vous souhaitez que l'agent soit lancé au démarrage, vous pouvez utiliser une 
        # tâche planifiée (voir notes ci-dessous) 
        Write-Host "Ce script a terminé son exécution."
-       
+
 notes: |
-  **Explications:**
+    **Explications:**
 
-  1.  **Téléchargement:**
-      *   Identique à la version précédente. Le script télécharge `dwagent_x86.exe` dans le répertoire temporaire.
-  2.  **Installation Silencieuse avec Clé:**
-      *   La variable `$key` doit être remplacée par la clé d'installation fournie par dwservice.
-      *   `Start-Process` exécute l'installateur avec l'argument `/SILENT` et `key=$key` pour une installation silencieuse avec la clé spécifiée.
-      *   `-Wait` assure que le script attend la fin de l'installation.
-  3.  **Persistance du Script:**
-      *   Identique à la version précédente. Le script n'est pas persistant en lui-même, voir les notes précédentes pour rendre l'agent persistant au démarrage.
+    1.  **Téléchargement:**
+        *   Identique à la version précédente. Le script télécharge `dwagent_x86.exe` dans le répertoire temporaire.
+    2.  **Installation Silencieuse avec Clé:**
+        *   La variable `$key` doit être remplacée par la clé d'installation fournie par dwservice.
+        *   `Start-Process` exécute l'installateur avec l'argument `/SILENT` et `key=$key` pour une installation silencieuse avec la clé spécifiée.
+        *   `-Wait` assure que le script attend la fin de l'installation.
+    3.  **Persistance du Script:**
+        *   Identique à la version précédente. Le script n'est pas persistant en lui-même, voir les notes précédentes pour rendre l'agent persistant au démarrage.
 
-  **Important:**
-      *  **Remplacer la Clé:** Remplacez `xxx-xxx-xxx` par votre propre clé d'installation.
-      *  **Droits d'administrateur:** L'exécution de l'installation nécessite des droits d'administrateur.
-      * **Téléchargement depuis internet :** Télécharger des exécutables depuis Internet comporte des risques. Assurez-vous que vous faites confiance à la source (dwservice.net dans ce cas).
+    **Important:**
+        *  **Remplacer la Clé:** Remplacez `xxx-xxx-xxx` par votre propre clé d'installation.
+        *  **Droits d'administrateur:** L'exécution de l'installation nécessite des droits d'administrateur.
+        * **Téléchargement depuis internet :** Télécharger des exécutables depuis Internet comporte des risques. Assurez-vous que vous faites confiance à la source (dwservice.net dans ce cas).
 
-**Comment utiliser ce YAML:**
-
-1. Enregistrez ce code dans un fichier avec une extension `.yaml` ou `.yml` (par exemple, `install_dwservice_key.yaml`).
-2. Exécutez-le en utilisant un outil compatible YAML, tel que GitHub Actions, Azure Pipelines, ou en utilisant une application comme `pwsh` en utilisant une commande telle que :
-   ```pwsh
-      pwsh -Command Invoke-YamlScript -Path .\install_dwservice_key.yaml
-    ```
-    (en ayant la fonction `Invoke-YamlScript` définie)
-
-N'hésitez pas à me demander si vous avez d'autres questions ou des ajustements à faire !
+# Comment utiliser ce YAML:
+#  1. Enregistrez ce code dans un fichier avec une extension `.yaml` ou `.yml` (par exemple, `install_dwservice_key.yaml`).
+#  2. Exécutez-le en utilisant un outil compatible YAML, tel que GitHub Actions, Azure Pipelines, ou en utilisant une application comme `pwsh` en utilisant une commande telle que :
+#    ```pwsh
+#       pwsh -Command Invoke-YamlScript -Path .\install_dwservice_key.yaml
+#     ```
+#     (en ayant la fonction `Invoke-YamlScript` définie)
