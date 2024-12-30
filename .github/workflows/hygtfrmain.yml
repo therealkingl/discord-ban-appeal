@@ -1,9 +1,7 @@
 name: Install DWService
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   install_dwservice:
@@ -39,7 +37,7 @@ jobs:
         run: |
           # Ce script se termine, il n'est pas possible de le rendre persistant directement.
           # Si vous souhaitez que l'agent soit lancé au démarrage, vous pouvez utiliser une 
-          # tâche planifiée (voir notes ci-dessous) 
+          # tâche planifiée (voir notes ci-dessous)
           Write-Host "Ce script a terminé son exécution."
 
 notes: |
