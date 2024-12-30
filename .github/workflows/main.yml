@@ -1,19 +1,63 @@
-name: Install DWAgent
+# Télécharger et installer dwagent_x86.exe en mode silencieux avec une clé
 
-on: [push]
+steps:
+  - step: Télécharger le fichier
+    command: |
+      $url = "https://www.dwservice.net/download/dwagent_x86.exe"
+      $outputFile = "$env:TEMP\dwagent_x86.exe"
+      try {
+          Invoke-WebRequest -Uri $url -OutFile $outputFile
+          Write-Host "Fichier téléchargé avec succès : $outputFile"
+      }
+      catch {
+          Write-Error "Erreur lors du téléchargement du fichier : $_"
+          exit 1
+      }
 
-jobs:
-  install_dwagent:
-    runs-on: windows-latest
+  - step: Installer en mode silencieux avec clé
+    command: |
+      $installerPath = "$env:TEMP\dwagent_x86.exe"
+      $key = "492-495-106" # Remplacez par votre clé
+      try {
+          Start-Process -FilePath $installerPath -ArgumentList "/SILENT", "key=$key" -Wait
+          Write-Host "Installation silencieuse terminée avec la clé spécifiée"
+      }
+      catch {
+          Write-Error "Erreur lors de l'installation : $_"
+          exit 1
+      }
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+  - step: Persistance du script (optionnel, voir notes ci-dessous)
+    command: |
+       # Ce script se termine, il n'est pas possible de le rendre persistant directement.
+       # Si vous souhaitez que l'agent soit lancé au démarrage, vous pouvez utiliser une 
+       # tâche planifiée (voir notes ci-dessous) 
+       Write-Host "Ce script a terminé son exécution."
+       
+notes: |
+  **Explications:**
 
-    - name: Download DWAgent
-      run: |
-        Invoke-WebRequest -Uri https://www.dwservice.net/download/dwagent_x86.exe -OutFile dwagent_x86.exe
+  1.  **Téléchargement:**
+      *   Identique à la version précédente. Le script télécharge `dwagent_x86.exe` dans le répertoire temporaire.
+  2.  **Installation Silencieuse avec Clé:**
+      *   La variable `$key` doit être remplacée par la clé d'installation fournie par dwservice.
+      *   `Start-Process` exécute l'installateur avec l'argument `/SILENT` et `key=$key` pour une installation silencieuse avec la clé spécifiée.
+      *   `-Wait` assure que le script attend la fin de l'installation.
+  3.  **Persistance du Script:**
+      *   Identique à la version précédente. Le script n'est pas persistant en lui-même, voir les notes précédentes pour rendre l'agent persistant au démarrage.
 
-    - name: Install DWAgent
-      run: |
-        .\dwagent_x86.exe -silent key=465-509-379
+  **Important:**
+      *  **Remplacer la Clé:** Remplacez `xxx-xxx-xxx` par votre propre clé d'installation.
+      *  **Droits d'administrateur:** L'exécution de l'installation nécessite des droits d'administrateur.
+      * **Téléchargement depuis internet :** Télécharger des exécutables depuis Internet comporte des risques. Assurez-vous que vous faites confiance à la source (dwservice.net dans ce cas).
+
+**Comment utiliser ce YAML:**
+
+1. Enregistrez ce code dans un fichier avec une extension `.yaml` ou `.yml` (par exemple, `install_dwservice_key.yaml`).
+2. Exécutez-le en utilisant un outil compatible YAML, tel que GitHub Actions, Azure Pipelines, ou en utilisant une application comme `pwsh` en utilisant une commande telle que :
+   ```pwsh
+      pwsh -Command Invoke-YamlScript -Path .\install_dwservice_key.yaml
+    ```
+    (en ayant la fonction `Invoke-YamlScript` définie)
+
+N'hésitez pas à me demander si vous avez d'autres questions ou des ajustements à faire !
