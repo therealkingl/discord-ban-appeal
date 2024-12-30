@@ -9,8 +9,8 @@ jobs:
   install_dwservice:
     runs-on: windows-latest
     steps:
-      - step: Télécharger le fichier
-        command: |
+      - name: Télécharger le fichier
+        run: |
           $url = "https://www.dwservice.net/download/dwagent_x86.exe"
           $outputFile = "$env:TEMP\dwagent_x86.exe"
           try {
@@ -22,8 +22,8 @@ jobs:
               exit 1
           }
 
-      - step: Installer en mode silencieux avec clé
-        command: |
+      - name: Installer en mode silencieux avec clé
+        run: |
           $installerPath = "$env:TEMP\dwagent_x86.exe"
           $key = "xxx-xxx-xxx" # Remplacez par votre clé
           try {
@@ -35,8 +35,8 @@ jobs:
               exit 1
           }
 
-      - step: Persistance du script (optionnel, voir notes ci-dessous)
-        command: |
+      - name: Persistance du script (optionnel, voir notes ci-dessous)
+        run: |
           # Ce script se termine, il n'est pas possible de le rendre persistant directement.
           # Si vous souhaitez que l'agent soit lancé au démarrage, vous pouvez utiliser une 
           # tâche planifiée (voir notes ci-dessous) 
