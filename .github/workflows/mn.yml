@@ -1,42 +1,34 @@
-version: "3"
+name: GitHub Action
 
-services:
+on:
+  push:
+    branches:
+      - main
 
-    # https://hub.docker.com/r/linuxserver/wireguard
-    # A VPN node with Wireguard service and an API exposed over 8008 port, based in FastAPI
-    lugodev_vpn_node:
-      build:
-        context: "."
-        dockerfile: Dockerfile
-      container_name: lugodev_vpn_node
-      cap_add:
-        - NET_ADMIN
-        - SYS_MODULE
-      environment:
-        - PUID=1000
-        - PGID=1000
-        - TZ=Europe/London
-        - LUGODEV_VPN_TOKEN=${LUGODEV_VPN_TOKEN}
-        - SERVERURL=${LUGODEV_VPN_HOSTNAME}
-        - SERVERPORT=51820
-        - PEERS=0 # peers to be generated
-        - PEERDNS=auto # optional
-        - INTERNAL_SUBNET=10.13.13.0 # only change if it clashes
-        - ALLOWEDIPS=0.0.0.0/0 # change this or ALL traffic will be routed thorugh the VPN
-      volumes:
-        - /apps/lugodev-vpn-node:/codebase
-        - /apps/lugodev-vpn-node/config:/config
-        - /lib/modules:/lib/modules
-      networks:
-        lugodev_vpn_subnet:
-          aliases:
-            - lugodev_vpn_node
-      ports:
-        - 51820:51820/udp
-        - 8008:8008
-      sysctls:
-        - net.ipv4.conf.all.src_valid_mark=1
-      restart: unless-stopped
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-networks:
-  lugodev_vpn_subnet:
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install OpenVPN
+        run: |
+          sudo apt update
+          sudo apt install -y openvpn openvpn-systemd-resolved
+      - name: Connect to VPN
+        uses: "kota65535/github-openvpn-connect-action@v2"
+        with:
+          config_file: .github/workflows/client.ovpn
+          username: ${{ secrets.OVPN_USERNAME }}
+          password: ${{ secrets.OVPN_PASSWORD }}
+          client_key: ${{ secrets.USER_KEY }}
+      - name: Use SSH
+        uses: appleboy/ssh-action@master
+        with: 
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd go/to/directory
+            git pull
